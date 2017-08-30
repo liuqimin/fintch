@@ -1,7 +1,7 @@
 from django.shortcuts import render,HttpResponse
 from django.views import View
 from django.contrib.auth import authenticate,login
-
+from base import form
 # Create your views here.
 class login(View):
     def get(self, request, *args, **kwargs):
@@ -25,3 +25,10 @@ class registerview(View):
         print('POST')
         print(request.POST)
         return render(request, 'user_register.html ')
+
+class userlist(View):
+    def get(self,request,*args,**kwargs):
+        obj = form.BaseForm()
+        return  render(request,'userlist.html',{'form':obj})
+    def post(self,request,*args,**kwargs):
+        pass

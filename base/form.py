@@ -3,15 +3,15 @@ from django.forms import widgets
 from django.forms import fields as django_fields
 
 
-class BaseForm(object):
+class BasebaseForm(object):
     def __init__(self, request, *args, **kwargs):
         self.request = request
-        super(BaseForm, self).__init__(*args, **kwargs)
+        super(BasebaseForm, self).__init__(*args, **kwargs)
 
 
-class CreateUserForm(BaseForm,django_forms.Form):
-    username = django_fields.charField(
-        min_lenght = 4,
+class CreateUserForm(BasebaseForm,django_forms.Form):
+    username = django_fields.CharField(
+        min_length = 4,
         max_length = 20,
         error_messages = { 'required':'用户名不能为空','min_lenght':'用户名长度不能小于4个字符','max_length':'用户名长度不能大于20个字符'}
     )
@@ -24,5 +24,22 @@ class CreateUserForm(BaseForm,django_forms.Form):
             'invalid' : '密码必须保护数字,字母,特殊字符',
             'min_length' : "密码长度不能小于8个字符",
             'max_length' : "密码长度不能大于32个字符"
+        }
+    )
+
+class BaseForm(BasebaseForm,django_forms.Form):
+    hostname = django_fields.CharField(
+        error_messages = {
+            'requeired': '服务器名不能为空'
+        }
+    )
+    ext_ip = django_fields.GenericIPAddressField(
+        error_messages = {
+            'requeired' : 'ext_ip is not null'
+    }
+    )
+    int_ip = django_fields.GenericIPAddressField(
+        error_messages = {
+            'required' : 'int_ip is not null'
         }
     )
