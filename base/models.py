@@ -37,11 +37,11 @@ class Service(models.Model):
         verbose_name_plural = '服务表'
 
     def __str__(self):
-        returninfo = {}-{}.format(self.app,self.port)
+        returninfo = '{}-{}'.format(self.app,self.port)
         return returninfo
 
 class Project(models.Model):
-    servidor = models.ForeignKey('Base')
+    servidor = models.ManyToManyField('Base')
     proyecto = models.CharField('项目名',max_length=32)
 
     class Meta:
