@@ -15,9 +15,16 @@ Including another URLconf
 """
 from django.conf.urls import url,include
 from base import views
-
+from django.contrib.auth import views as auth_views
 urlpatterns = [
-    url(r'^login', views.login.as_view()),
+    url(r'^login', views.ac_login.as_view()),
     url(r'^registeruser', views.registerview.as_view()),
+
+   # url('^', include('django.contrib.auth.urls')),
+    url(r'^password_change/$', auth_views.PasswordChangeView.as_view(), name='password_change'),
+    url(r'^password_change/done/$', auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),
+
+    url(r'^password_reset/$', auth_views.PasswordResetView.as_view(), name='password_reset'),
+    url(r'^password_reset/done/$', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
 ]
 

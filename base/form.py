@@ -2,7 +2,7 @@ from django import forms as django_forms
 from django.core.exceptions import ValidationError
 from django.forms import widgets
 from django.forms import fields as django_fields
-
+from django.contrib.auth.models import User
 
 class BasebaseForm(object):
     def __init__(self, request, *args, **kwargs):
@@ -13,7 +13,7 @@ class BasebaseForm(object):
 class CreateUserForm(django_forms.Form):
 
     username = django_fields.CharField(
-        label = '用户名',
+        label = '账号',
         min_length = 4,
         max_length = 20,
         error_messages = { 'required':'用户名不能为空','min_length':'用户名长度不能小于4个字符','max_length':'用户名长度不能大于20个字符'}
@@ -43,12 +43,21 @@ class CreateUserForm(django_forms.Form):
             'max_length' : "密码长度不能大于32个字符"
         }
     )
-    name = django_fields.CharField()
+    mail =django_fields.EmailField(
+        label = '邮件',
+    )
+    name = django_fields.CharField(
+        label = '用户名',
+    )
     def clean(self):
         clean_data = super(CreateUserForm,self).clean()
+        username = clean_data.get('username')
+        if User.objects.filter(username=username):
+            raise ValidationError(message='账号已存在', code='invalid')
         password = clean_data.get("password")
         passwordagain = clean_data.get("passwordagain")
         if password != passwordagain:
             raise ValidationError(message='密码需要相同', code='invalid')
+
 
 

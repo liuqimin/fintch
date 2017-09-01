@@ -11,11 +11,21 @@ from django.db.models.signals import pre_migrate, post_migrate
 
 from django.test.signals import setting_changed
 from django.test.signals import template_rendered
-
+from django.dispatch import receiver
+from django.contrib.auth.models import User
 from django.db.backends.signals import connection_created
-from models import UserProfile
+from base.models import UserProfile
 
 @receiver(post_save, sender=User)
 def create_favorites(sender, instance, created, **kwargs):
     if created:
+        print(111)
+        print(instance)
         UserProfile.objects.create(user=instance)
+
+def f1(sender, **kwargs):
+        print(sender,"xxoo_callback")
+        # print(sender,kwargs)
+
+
+pre_save.connect(f1)
