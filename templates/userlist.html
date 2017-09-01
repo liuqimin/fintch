@@ -5,11 +5,33 @@
     <title>userlist</title>
 </head>
 <body>
-    <div>
-        <p>{{ form.hostname }}</p>
-        <p>{{ form.ext_ip }}</p>
-        <p>{{ form.int_ip }}</p>
+    <form id="userlistform" method="POST" action="/base/registeruser" enctype="multipart/form-data">
+        <p>{{ form.as_p }}</p>
 
-    </div>
+        <input id="list" type="submit"/>
+    </form>
+    <script src="/static/js/jquery-3.2.1.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            bindcreateuser();
+        });
+        function bindcreateuser(){
+            //console.log($('#userlistform').serialize());
+            $('#list').click(function(){
+                console.log($('#userlistform').serialize());
+                var formData = $('#userlistform').serialize();
+                $.ajax({
+                        url: "/base/registeruser",
+                        type: 'POST',
+                        dataType: 'json',
+                        data: formData,
+                        success : function(arg){
+                            console.log(arg)
+                        }
+                })
+            })
+        };
+
+    </script>
 </body>
 </html>

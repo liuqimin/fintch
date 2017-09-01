@@ -19,6 +19,5 @@ from base import views
 urlpatterns = [
     url(r'^login', views.login.as_view()),
     url(r'^registeruser', views.registerview.as_view()),
-
 ]
 
