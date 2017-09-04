@@ -26,5 +26,9 @@ urlpatterns = [
 
     url(r'^password_reset/$', auth_views.PasswordResetView.as_view(), name='password_reset'),
     url(r'^password_reset/done/$', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    url(r'asset',views.asset.as_view(),name='asset_list'),
+    url(r'assets',views.assets.as_view()),
+    url(r'^server.html', views.ServerView.as_view()),
+    url(r'^server-json.html', views.ServerJsonView.as_view()),
 ]
 
