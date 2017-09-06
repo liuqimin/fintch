@@ -5,7 +5,9 @@ from django.views import View
 from django.contrib.auth import authenticate,login
 from django.contrib.auth.models import User
 from base import form,models
+from django.http import JsonResponse
 import json
+from base.service import server
 # Create your views here.
 from django.db import IntegrityError
 class ac_login(View):
@@ -90,63 +92,9 @@ class ServerView(View):
         return render(request,'server.html')
 
 class ServerJsonView(View):
-    def get(self,request,*args, **kwargs):
-        response = BaseResponse()
-        try:
-            # 获取要显示的列
-            # 获取数据
-            table_config = [
-                {
-                    'q': 'id',
-                    'title': '主机名',
-                    'display':0,
-                    'text': {},
-                    'attr': {}
-                },
-                {
-                    'q': 'hostname',
-                    'title': '主机名',
-                    'display':1,
-                    'text': {'content': '{m}','kwargs': {'m':'@hostname'}},
-                    'attr': {'orginal':'@hostname','k2':'v2'}
-                },
-                # '{n}-{m}'.format({'n': 'hostname','m':'@hostname'}) => hostname-c1.com
-                {
-                    'q': 'ext_ip',
-                    'title': '外部IP',
-                    'display':1,
-                #    'text':{},
-               #     'attr':{}
-                    'text': {'content': '{m}','kwargs': {'m':'@ext_ip'}},
-                    'attr': {'k1':'@port','k2':'v2'}
-                },
-                {
-                    'q': 'int_ip',
-                    'title': '内部ip',
-                    'display':1,
-                #    'text': {},
-               #     'attr': {}
-
-
-                    'text': {'content': '{m}','kwargs': {'m':'@int_ip'}},
-                    'attr': {'k1':'@business_unit_id','k2':'v2'}
-                },
-            ]
-
-            values_list = []
-            for item in table_config:
-                if item['q']:
-                    values_list.append(item['q'])
-
-            data_list = models.Base.objects.values(*values_list)
-            print(data_list)
-            data_list = list(data_list)
-            print(data_list)
-            response.data = {
-                'table_config': table_config,
-                'data_list': data_list,
-            }
-        except Exception as e:
-            response.status = False
-            response.message = str(e)
-        return HttpResponse(json.dumps(response.__dict__))
+    def get(self, request):
+        obj = server.Server()
+        print(request)
+        response = obj.fetch_services(request)
+        print(response.__dict__)
+        return JsonResponse(response.__dict__)
