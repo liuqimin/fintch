@@ -115,19 +115,20 @@ class ServerJsonView(View):
                     'q': 'ext_ip',
                     'title': '外部IP',
                     'display':1,
-                    'text': {'content': '{m}','kwargs': {'m':'@port'}},
+                #    'text':{},
+               #     'attr':{}
+                    'text': {'content': '{m}','kwargs': {'m':'@ext_ip'}},
                     'attr': {'k1':'@port','k2':'v2'}
                 },
                 {
                     'q': 'int_ip',
                     'title': '内部ip',
                     'display':1,
-                    # 去全局变量business_unit_list = [
-                    #      {id:1,name:'WEB'},
-                    #      {id:2,name:'存储'},
-                    #      {id:3,name:'商城'},
-                    # ]
-                    'text': {'content': '{m}','kwargs': {'m':'@@business_unit_list'}},
+                #    'text': {},
+               #     'attr': {}
+
+
+                    'text': {'content': '{m}','kwargs': {'m':'@int_ip'}},
                     'attr': {'k1':'@business_unit_id','k2':'v2'}
                 },
             ]
@@ -138,7 +139,7 @@ class ServerJsonView(View):
                     values_list.append(item['q'])
 
             data_list = models.Base.objects.values(*values_list)
-            # [{},{}]
+            print(data_list)
             data_list = list(data_list)
             print(data_list)
             response.data = {

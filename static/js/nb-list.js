@@ -3,6 +3,7 @@
  */
 (function(jq){
         var requestURL;
+        var NB_GLOBAL_DICT = {};
 
 
         // 为字符串创建format方法，用于字符串格式化
@@ -90,7 +91,6 @@
                 // row1= {'port': 11, 'hostname': 'c1.com'}
                 // row2= {'port': 22, 'hostname': 'c2.com'}
                 var tr = document.createElement('tr');
-
                 $.each(tableConfig,function(k2,configItem){
 
                     if(configItem.display){
