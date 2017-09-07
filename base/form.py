@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.forms import widgets
 from django.forms import fields as django_fields
 from django.contrib.auth.models import User
-
+from base import models
 class BasebaseForm(object):
     def __init__(self, request, *args, **kwargs):
         self.request = request
@@ -60,4 +60,23 @@ class CreateUserForm(django_forms.Form):
             raise ValidationError(message='密码需要相同', code='invalid')
 
 
+class CreateServerForm(django_forms.Form):
+    username = django_fields.CharField(
+        label='主机名',
+        min_length=4,
+        max_length=20,
+        error_messages={'required': '用户名不能为空', 'min_length': '用户名长度不能小于4个字符', 'max_length': '用户名长度不能大于20个字符'}
+    )
+    ext_ip = django_fields.GenericIPAddressField(
+        label = '内网ip'
+         )
+    int_ip = django_fields.GenericIPAddressField(
+        label = '外网ip'
+    )
+    status = django_fields.ChoiceField(widget=widgets.Select(choices=[]))
 
+    def __init__(self,*args,**kwargs):
+        super(CreateServerForm,self).__init__(*args,**kwargs)
+        d_choices = list(map(lambda x: (x[0], x[1]), models.Base.status_choices))
+
+        self.fields['status'].choices = d_choices

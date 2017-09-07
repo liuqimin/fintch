@@ -98,3 +98,24 @@ class ServerJsonView(View):
         response = obj.fetch_services(request)
         print(response.__dict__)
         return JsonResponse(response.__dict__)
+
+    def delete(self, request):
+        print('111')
+        response = server.Server.delete_assets(request)
+        print('now')
+        return JsonResponse(response.__dict__)
+
+    def put(self, request):
+        response = server.Server.put_assets(request)
+        return JsonResponse(response.__dict__)
+
+class ServerAddView(View):
+
+    def get(self,request,*args,**kwargs):
+        obj = form.CreateServerForm()
+        kwargs = {
+            'form': obj,
+        }
+        print(obj)
+        result = map(lambda x: (x[0],x[1]), models.Base.status_choices)
+        return render(request,'add_server.html',kwargs)

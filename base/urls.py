@@ -30,5 +30,6 @@ urlpatterns = [
     url(r'assets',views.assets.as_view()),
     url(r'^server.html', views.ServerView.as_view()),
     url(r'^server-json.html', views.ServerJsonView.as_view()),
+    url(r'^add-server.html', views.ServerAddView.as_view(),name='add_server'),
 ]
 
