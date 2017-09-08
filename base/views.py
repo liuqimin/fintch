@@ -116,6 +116,38 @@ class ServerAddView(View):
         kwargs = {
             'form': obj,
         }
-        print(obj)
+
         result = map(lambda x: (x[0],x[1]), models.Base.status_choices)
         return render(request,'add_server.html',kwargs)
+
+    def post(self,request):
+        print(request.POST)
+        obj = form.CreateServerForm(request.POST, request.FILES)
+        kwargs = {
+            'form':obj,
+        }
+        print('cao')
+        if obj.is_valid():
+            values = obj.clean()
+            print(values)
+            print('ok')
+            u_dict = {
+                'hostname':obj.cleaned_data.get('username'),
+                'ext_ip':obj.cleaned_data.get('ext_ip'),
+                'int_ip':obj.cleaned_data.get('int_ip'),
+                'status':obj.cleaned_data.get('status')
+            }
+            try:
+                result = models.Base.objects.create(**u_dict)
+                print(333)
+                print(result.id,333,3333)
+                print('over')
+                ret = {'result':'add success'}
+
+            except Exception as e:
+                ret = {'result': e}
+            return HttpResponse('good')
+        else:
+            print('shibai')
+            return render(request, 'add_server.html', kwargs)
+

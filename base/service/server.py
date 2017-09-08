@@ -50,7 +50,7 @@ class Server(BaseServiceList):
                 'title': '状态',
                 'display': 1,
                 'text': {'content': '{m}', 'kwargs': {'m': '@@device_status_list'}},
-                'attr': {'name':'status','orginal': '@status', 'edit-enable': 'true', 'edit-type': 'select',
+                'attr': {'name':'status','id':'@status','orginal': '@status', 'edit-enable': 'true', 'edit-type': 'select',
                          'global-name': 'device_status_list'}
             },
         ]

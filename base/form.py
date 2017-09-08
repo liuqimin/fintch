@@ -65,15 +65,30 @@ class CreateServerForm(django_forms.Form):
         label='主机名',
         min_length=4,
         max_length=20,
-        error_messages={'required': '用户名不能为空', 'min_length': '用户名长度不能小于4个字符', 'max_length': '用户名长度不能大于20个字符'}
+        widget=widgets.TextInput(attrs={'id':'username'}),
+        error_messages={'required': '主机名不能为空', 'min_length': '主机名长度不能小于4个字符', 'max_length': '主机名长度不能大于20个字符'}
     )
     ext_ip = django_fields.GenericIPAddressField(
-        label = '内网ip'
+        label = '外网ip',
+        widget = widgets.TextInput(attrs={'id': 'ext_ip'}),
          )
     int_ip = django_fields.GenericIPAddressField(
-        label = '外网ip'
+        label = '内网ip',
+        widget=widgets.TextInput(attrs={'id': 'int_ip'}),
     )
     status = django_fields.ChoiceField(widget=widgets.Select(choices=[]))
+
+    def clean(self):
+        clean_data = super(CreateServerForm, self).clean()
+        username = clean_data.get('username')
+        ext_ip = clean_data.get('ext_ip')
+        int_ip = clean_data.get('int_ip')
+        if models.Base.objects.filter(hostname=username):
+            raise ValidationError(message='主机名已存在', code='invalid')
+        if models.Base.objects.filter(ext_ip=ext_ip):
+            raise ValidationError(message='外网IP已存在', code='invalid')
+        if models.Base.objects.filter(int_ip=int_ip):
+            raise ValidationError(message='内网IP已存在', code='invalid')
 
     def __init__(self,*args,**kwargs):
         super(CreateServerForm,self).__init__(*args,**kwargs)

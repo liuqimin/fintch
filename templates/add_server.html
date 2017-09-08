@@ -11,14 +11,15 @@
         <li><a href="/base/server.html">资产列表</a></li>
         <li class="active">添加资产</li>
     </ol>
-    <div style="padding: 5px 8px;">
-        <form id="userlistform" method="POST"  enctype="multipart/form-data">
+    <div style="padding: 5px 8px;" id="add-server-div" >
+        <form id="userlistform"  >
             <p>{{ form.as_p }}</p>
             <input id="list" type="submit"/>
+
         </form>
     </div>
 
-
+    {{ result }}
 
 {% endblock %}
 
@@ -33,18 +34,24 @@
             bindcreateserver();
         });
         function bindcreateserver(){
-            //console.log($('#userlistform').serialize());
+            var username=$('username').val()
+
             $('#list').click(function(){
-                console.log($('#userlistform').serialize());
-                var formData = $('#userlistform').serialize();
+                data = [];
+                var username=$('username').content();
+                console.log(username)
                 $.ajax({
                         url: '/base/add-server.html',
                         type: 'POST',
-                        dataType: 'json',
-                        data: formData,
-                        success : function(arg){
-                            console.log(arg)
-                        }
+                        dataType: 'JSON', // 内部
+                        traditional: true,
+                        data: {data_list:data},
+                        success: function(obj){
+                            console.log(obj);
+                         },
+                        error: function () {
+
+                    }
                 })
             })
         };
