@@ -32,25 +32,32 @@
         $(function () {
             $.initMenu('#menu_server');
             bindcreateserver();
+
         });
         function bindcreateserver(){
-            var username=$('username').val()
+            //var username=$('username').val()
 
             $('#list').click(function(){
-                data = [];
-                var username=$('username').content();
-                console.log(username)
+                formdata = {
+                    username:$('#username').val(),
+                    ext_ip:$('#ext_ip').val(),
+                    int_ip:$('#int_ip').val(),
+                    status:$('#status').val()
+                }
+                console.log(formdata);
                 $.ajax({
                         url: '/base/add-server.html',
                         type: 'POST',
                         dataType: 'JSON', // 内部
                         traditional: true,
-                        data: {data_list:data},
+                        data: formdata,
                         success: function(obj){
-                            console.log(obj);
-                         },
-                        error: function () {
+                           //# console.log(obj);
+                            alert('add success');
 
+                         },
+                        error: function (obj) {
+                            console.log(obj);
                     }
                 })
             })

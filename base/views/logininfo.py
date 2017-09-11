@@ -10,6 +10,7 @@ import json
 from base.service import server
 # Create your views here.
 from django.db import IntegrityError
+
 class ac_login(View):
     def get(self, request, *args, **kwargs):
         #   user = User.objects.create_user('te1stsfafa3','422171714@qq.com','test@42217171')
@@ -69,85 +70,3 @@ class registerview(View):
             return HttpResponseRedirect(reverse('password_change_done'))
         else:
             return render(request, 'userlist.html', {'form': obj})
-
-
-class asset(View):
-    def get(self,request,*args, **kwargs):
-        return render(request, 'asset.html')
-    def post(self,request, *args, **kwargs):
-        return render(request, 'asset.html')
-class assets(View):
-    def get(self,request, *args, **kwargs):
-        pass
-    def post(self,request, *args, **kwargs):
-        pass
-
-class BaseResponse(object):
-    def __init__(self):
-        self.status = True
-        self.data = None
-        self.message = None
-class ServerView(View):
-    def get(self,request,*args, **kwargs):
-        return render(request,'server.html')
-
-class ServerJsonView(View):
-    def get(self, request):
-        obj = server.Server()
-        print(request)
-        response = obj.fetch_services(request)
-        print(response.__dict__)
-        return JsonResponse(response.__dict__)
-
-    def delete(self, request):
-        print('111')
-        response = server.Server.delete_assets(request)
-        print('now')
-        return JsonResponse(response.__dict__)
-
-    def put(self, request):
-        response = server.Server.put_assets(request)
-        return JsonResponse(response.__dict__)
-
-class ServerAddView(View):
-
-    def get(self,request,*args,**kwargs):
-        obj = form.CreateServerForm()
-        kwargs = {
-            'form': obj,
-        }
-
-        result = map(lambda x: (x[0],x[1]), models.Base.status_choices)
-        return render(request,'add_server.html',kwargs)
-
-    def post(self,request):
-        print(request.POST)
-        obj = form.CreateServerForm(request.POST, request.FILES)
-        kwargs = {
-            'form':obj,
-        }
-        print('cao')
-        if obj.is_valid():
-            values = obj.clean()
-            print(values)
-            print('ok')
-            u_dict = {
-                'hostname':obj.cleaned_data.get('username'),
-                'ext_ip':obj.cleaned_data.get('ext_ip'),
-                'int_ip':obj.cleaned_data.get('int_ip'),
-                'status':obj.cleaned_data.get('status')
-            }
-            try:
-                result = models.Base.objects.create(**u_dict)
-                print(333)
-                print(result.id,333,3333)
-                print('over')
-                ret = {'result':'add success'}
-
-            except Exception as e:
-                ret = {'result': e}
-            return HttpResponse('good')
-        else:
-            print('shibai')
-            return render(request, 'add_server.html', kwargs)
-

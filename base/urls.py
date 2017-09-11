@@ -14,11 +14,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url,include
-from base import views
+from base.views import logininfo,server,projapp,asset
+
 from django.contrib.auth import views as auth_views
 urlpatterns = [
-    url(r'^login', views.ac_login.as_view()),
-    url(r'^registeruser', views.registerview.as_view()),
+
+     url(r'^login', logininfo.ac_login.as_view()),
+     url(r'^registeruser', logininfo.registerview.as_view()),
 
    # url('^', include('django.contrib.auth.urls')),
     url(r'^password_change/$', auth_views.PasswordChangeView.as_view(), name='password_change'),
@@ -26,10 +28,12 @@ urlpatterns = [
 
     url(r'^password_reset/$', auth_views.PasswordResetView.as_view(), name='password_reset'),
     url(r'^password_reset/done/$', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
-    url(r'asset',views.asset.as_view(),name='asset_list'),
-    url(r'assets',views.assets.as_view()),
-    url(r'^server.html', views.ServerView.as_view()),
-    url(r'^server-json.html', views.ServerJsonView.as_view()),
-    url(r'^add-server.html', views.ServerAddView.as_view(),name='add_server'),
+    #url(r'asset',views.asset.as_view(),name='asset_list'),
+    #url(r'assets',views.assets.as_view()),
+    url(r'^server.html', server.ServerView.as_view()),
+    url(r'^server-json.html', server.ServerJsonView.as_view()),
+    url(r'^proj_app.html', projapp.ProjAppView.as_view()),
+    url(r'^proj_app-json.html', projapp.ProjAppJsonView.as_view()),
+   # url(r'^add-server.html', views.ServerAddView.as_view(),name='add_server'),
 ]
 

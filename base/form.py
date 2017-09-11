@@ -76,7 +76,10 @@ class CreateServerForm(django_forms.Form):
         label = '内网ip',
         widget=widgets.TextInput(attrs={'id': 'int_ip'}),
     )
-    status = django_fields.ChoiceField(widget=widgets.Select(choices=[]))
+    status = django_fields.ChoiceField(
+        widget=widgets.Select(choices=[],attrs={'id': 'status'}),
+        label='状态',
+                                       )
 
     def clean(self):
         clean_data = super(CreateServerForm, self).clean()

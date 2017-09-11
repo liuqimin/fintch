@@ -19,7 +19,8 @@ class PageInfo(object):
     def total_page(self):
         if not self.total_items:
             self.total_items = 0
-        val = self.total_items / self.per_items +1 if self.total_items % self.current_page > 0 else self.total_items / self.per_items
+        val = int(self.total_items / self.per_items) + 1 if self.total_items % self.per_items > 0 else self.total_items / self.per_items
+        #print(int(self.total_items / self.per_items),'val',val)
         return val
     @property
     def start(self):
@@ -42,7 +43,7 @@ class PageInfo(object):
         if page <= 1:
             prev_html = "<li class='disabled'><a href='javascript:void(0)'>上一页</a></li>"
         else:
-            prev_html = "<li><a href='javascript:void(0)' onclick='ChangePage(%d)'>上一页</a></li>" %(page -1,)
+            prev_html = "<li><a href='javascript:void(0)' onclick='ChangePage(%d)'>上一页</a></li>" %(page-1,)
         page_html.append(prev_html)
 
         if all_page_count <11:
@@ -60,9 +61,12 @@ class PageInfo(object):
                     begin = page - 6
                     end = page + 5
         for i in range(int(begin),int(end)):
-            if page == 1 + 1:
+            print(i,'range')
+            if page == i + 1:
+                print(page,)
                 a_html = "<li class='active'><a href='javascript:void(0)' onclick='ChangePage(%d)'>%d</a></li>" \
                          %(i +1 ,i+1,)
+                print(a_html,3)
             else:
                 a_html = "<li><a href='javascript:void(0)' onclick='ChangePage(%d)'>%d</a></li>" %(i+1,i+1,)
             page_html.append(a_html)
@@ -73,7 +77,7 @@ class PageInfo(object):
             next_html = "<li><a href='javascript:void(0)' onclick='ChangePage(%d)'>下一页</a></li>" %(page + 1,)
         page_html.append(next_html)
 
-        end_html = "<li><a href='javascript:void(0)'onclick='ChangePage(%d)'>尾页</a></li>" %(page+1,)
+        end_html = "<li><a href='javascript:void(0)'onclick='ChangePage(%d)'>尾页</a></li>" %(self.total_page,)
         page_html.append(end_html)
 
         end_html = "<li><a href='javascript:void(0)'>共%d页/%d 条数据</a></li>" %(all_page_count,total_items,)

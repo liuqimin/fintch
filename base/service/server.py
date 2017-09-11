@@ -92,7 +92,7 @@ class Server(BaseServiceList):
             conditions = self.Server_condition(request)
 
             asset_count = models.Base.objects.filter(conditions).count()
-            print(asset_count,'count')
+            print(asset_count,'count',request.GET.get('pager')  )
             page_info = PageInfo(request.GET.get('pager',None),asset_count)
             asset_list = models.Base.objects.filter(conditions).extra(select=self.extra_select).values(\
                 *self.values_list)[page_info.start:page_info.end]

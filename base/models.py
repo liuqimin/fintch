@@ -26,12 +26,19 @@ class Service(models.Model):
         ('prd', '生产环节'),
         ('demo', '演示环境'),
     )
+    jar_choices = (
+        (1,'是'),
+        (2,'否'),
+    )
     servidor = models.ForeignKey('Base')
     app = models.CharField('服务名',max_length=32)
     entorno = models.CharField('环境',max_length=8,choices=status_choices)
     port = models.IntegerField('端口')
+    is_jar_or_war = models.CharField('是否jar或者war',max_length=2,choices=jar_choices)
     jar = models.CharField('java包名',max_length=32,null=True,blank=True)
-    jar_load = models.CharField('java包名',max_length=32,null=True,blank=True)
+    #jar_load = models.CharField('java路径',max_length=32,null=True,blank=True)
+    start_user = models.CharField('启动用户',max_length=8)
+    #start_script = models.FilePathField('启动命令',max_lenth)
     class Meta:
         verbose_name = '服务表'
         verbose_name_plural = '服务表'

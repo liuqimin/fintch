@@ -107,7 +107,7 @@
                 id_list.push($(this).val());
             }
         });
-        console.log(id_list);
+
         $.ajax({
             url: requestUrl,
             type: 'DELETE',
@@ -276,7 +276,6 @@
         var $body = $('#table_body');
         $body.empty();
 
-
         $.each(list, function (k1, row) {
             // row 表示从数据库获取的每行资产字典信息 {'id':'1','name': 'root' ...}
             // tbConfig 包含了所有表格的配置
@@ -331,6 +330,7 @@
             });
             $body.append(tr);
         })
+
     }
 
     /*
@@ -352,6 +352,7 @@
      */
     function initPager(pageStr) {
         var $pager = $('#pager');
+
         $pager.empty();
         $pager.append(pageStr);
     }
@@ -882,13 +883,19 @@
             });
         },
 
-        'nbDataList': function(url){
+        'nbDataList': function (url) {
             requestUrl = url;
             initialize(1);
             bindMenuFunction();
             bindMultiSelect();
             bindSearchCondition();
-        }
+        },
+        'pagerchange': function (pager) {
 
+            initialize(pager);
+            bindMenuFunction();
+            bindMultiSelect();
+            bindSearchCondition();
+         },
     });
 })(jQuery);
