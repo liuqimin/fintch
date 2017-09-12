@@ -34,6 +34,7 @@ urlpatterns = [
     url(r'^server-json.html', server.ServerJsonView.as_view()),
     url(r'^proj_app.html', projapp.ProjAppView.as_view()),
     url(r'^proj_app-json.html', projapp.ProjAppJsonView.as_view()),
+    url(r'^check_code.html', logininfo.CheckCcode.as_view()),
    # url(r'^add-server.html', views.ServerAddView.as_view(),name='add_server'),
 ]
 

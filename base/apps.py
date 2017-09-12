@@ -4,4 +4,3 @@ class BaseConfig(AppConfig):
     name = 'base'
     def ready(self):
         from . import sg
-        print(1111)

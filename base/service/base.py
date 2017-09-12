@@ -1,6 +1,7 @@
 import json
 from django.db.models import Q
 
+
 class BaseServiceList(object):
     def __init__(self,condition_config,table_config,extra_select):
         # 查询条件的配置，列表
@@ -33,3 +34,6 @@ class BaseServiceList(object):
                 temp.children.append((k,item))
             con_q.add(temp,'ADD')
         return con_q
+
+
+
