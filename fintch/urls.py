@@ -20,4 +20,5 @@ from base import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^base/',include('base.urls')),
+    url(r'^backend/',include('background.urls')),
 ]

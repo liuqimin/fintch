@@ -1,6 +1,7 @@
 from django.shortcuts import render,HttpResponse
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
 from django.views import View
 from django.contrib.auth import authenticate,login,get_user
 from django.contrib.auth.models import User
@@ -62,7 +63,7 @@ class registerview(View):
         }
         return render(request,'userlist.html',kwargs)
     def post(self,request,*args,**kwargs):
-        print(request.POST)
+        #print(request.POST)
         obj = form.CreateUserForm(request.POST, request.FILES)
         if obj.is_valid():
             values = obj.clean()
@@ -98,5 +99,15 @@ class CheckCcode(View):
         request.session['CheckCode'] = code
         return HttpResponse(stream.getvalue())
 
-    def post(self, request, *args, **kwargs):
-        pass
+def logout(request):
+    """
+    注销
+    :param request:
+    :return:
+    """
+    request.session.clear()
+
+    return redirect('/base/login')
+
+
+

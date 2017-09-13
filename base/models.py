@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
+
 from django.contrib.auth.models import  User
 # Create your models here.
 class Base(models.Model):
@@ -59,7 +60,21 @@ class Project(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
-    name = models.CharField(max_length=32)
+    name = models.CharField(verbose_name='昵称', max_length=32)
+    avatar = models.ImageField(verbose_name='头像')
+    create_time = models.DateTimeField(verbose_name='创建时间', auto_now_add=True)
+    fans = models.ManyToManyField(verbose_name='粉丝们',
+                                  to='UserProfile',
+                                  through='UserFans',
+                                  related_name='f',
+                                  through_fields=('user', 'follower'))
 
     def __str__(self):
         return self.name
+
+class UserFans(models.Model):
+    """
+    互粉关系表
+    """
+    user = models.ForeignKey(verbose_name='博主',to='UserProfile',to_field='user',related_name='users')
+    follower = models.ForeignKey(verbose_name='粉丝',to='UserProfile',to_field='user',related_name='follwers')
