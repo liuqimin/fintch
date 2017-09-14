@@ -4,6 +4,8 @@ from django.shortcuts import redirect
 from django.db import transaction
 from django.urls import reverse
 from django.views import View
+from background import models
+from utils.pager import PageInfo
 import json
 import os
 from base.views.base import BaseResponse
@@ -44,4 +46,35 @@ def categroy(request):
 
 def article(request,*args,**kwargs):
     #blog_id = request.session['user_info']['blog_nid']
-    return render(request,'backend/article.html')
+   # article_type_list = models.Article.type_choices
+
+    result = {}
+    type_list = map(lambda item: {'nid': item[0], 'title': item[1]},
+                    models.Article.type_choices)  ##map 对象，用list可以获取，可以迭代
+    categroy_list = models.Category.objects.all()
+   # asset_count = models.Base.objects.filter(conditions).count()
+
+    page_info = PageInfo(request.GET.get('pager', None), asset_count)
+    result['type_list'] = type_list
+    result['categroy_list'] = categroy_list
+    if kwargs:
+        print(request.path_info)
+        condition ={}
+        for k,v in kwargs.items():
+            kwargs[k] = int(v)
+            if v == '0':
+                result[k] = 0
+            else:
+                condition[k] = int(v)
+                result[k] = int(v)
+        content_count = models.Article.objects.filter(**condition).count()
+        page_info = PageInfo(request.GET.get('pager', None), content_count)
+        result['content'] = page_info
+        print(result)
+        return render(request, 'backend/article.html',result)
+
+    else:
+
+        print(result)
+        return render(request,'backend/article.html',result)
+

@@ -21,4 +21,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^base/',include('base.urls')),
     url(r'^backend/',include('background.urls')),
+    url(r'^net/',include('nettool.urls')),
 ]

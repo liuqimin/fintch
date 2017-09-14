@@ -8,5 +8,6 @@ urlpatterns = [
     url(r'^tag.html',user.tag),
     url(r'^upload-avatar.html',user.upload_avatar.as_view()),
     url(r'^category.html', user.categroy),
-  #  url(r'^article-(?P<article_type_id>\d+)-(?P<category_id>\d+).html$', user.article, name='article'),
+    url(r'^article.html', user.article, name='article'),
+    url(r'^article-(?P<article_type_id>\d+)-(?P<category_id>\d+).html$', user.article, name='article'),
 ]
