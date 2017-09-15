@@ -5,7 +5,7 @@ from django.utils.safestring import mark_safe
 from time import sleep
 
 class PageInfo(object):
-    def __init__(self,currentPage,totalItems,perItems=20,pageNum=11):
+    def __init__(self,currentPage,totalItems,perItems=5,pageNum=6):
         try:
             currentPage = int(currentPage)
         except Exception as e:

@@ -44,37 +44,49 @@ def tag(request):
 def categroy(request):
     return render(request, 'backend/categroy.html')
 
-def article(request,*args,**kwargs):
-    #blog_id = request.session['user_info']['blog_nid']
-   # article_type_list = models.Article.type_choices
+class article(View):
+    def get(self,request,*args,**kwargs):
+        # blog_id = request.session['user_info']['blog_nid']
+        # article_type_list = models.Article.type_choices
 
-    result = {}
-    type_list = map(lambda item: {'nid': item[0], 'title': item[1]},
-                    models.Article.type_choices)  ##map 对象，用list可以获取，可以迭代
-    categroy_list = models.Category.objects.all()
-   # asset_count = models.Base.objects.filter(conditions).count()
+        result = {}
+        type_list = map(lambda item: {'nid': item[0], 'title': item[1]},
+                        models.Article.type_choices)  ##map 对象，用list可以获取，可以迭代
+        categroy_list = models.Category.objects.all()
+        result['type_list'] = type_list
+        result['categroy_list'] = categroy_list
+        if kwargs:
+            print(request.path_info)
+            condition = {}
+            for k, v in kwargs.items():
+                kwargs[k] = int(v)
+                if v == '0':
+                    result[k] = 0
+                else:
+                    condition[k] = int(v)
+                    result[k] = int(v)
+            content_count = models.Article.objects.filter(**condition).count()
+            page_info = PageInfo(request.GET.get('p', None), content_count)
+            result['page_info'] = {
+                "page_str": page_info.pager(),
+                #  "page_start":page_info.start,
+                "p": request.GET.get('p', 1),
+                "content_count": content_count,
+            }
+            print(result['page_info'],333)
+            blog_content_list = models.Article.objects.filter(**condition).values('nid', 'title', 'summary')[
+                                page_info.start:page_info.end]
+            result['content'] = blog_content_list
+            #  print(page_info)
+            # result['content'] = page_info
+            #   print(result)
+            # exit(1)
+            return render(request, 'backend/article.html', result)
 
-    page_info = PageInfo(request.GET.get('pager', None), asset_count)
-    result['type_list'] = type_list
-    result['categroy_list'] = categroy_list
-    if kwargs:
-        print(request.path_info)
-        condition ={}
-        for k,v in kwargs.items():
-            kwargs[k] = int(v)
-            if v == '0':
-                result[k] = 0
-            else:
-                condition[k] = int(v)
-                result[k] = int(v)
-        content_count = models.Article.objects.filter(**condition).count()
-        page_info = PageInfo(request.GET.get('pager', None), content_count)
-        result['content'] = page_info
-        print(result)
-        return render(request, 'backend/article.html',result)
+        else:
 
-    else:
+            print(result)
+            return render(request, 'backend/article.html', result)
 
-        print(result)
-        return render(request,'backend/article.html',result)
-
+    def post(self,request,*args,**kwargs):
+        pass
