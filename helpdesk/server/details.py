@@ -1,49 +1,51 @@
 import json
-from base import models
 from utils.pager import PageInfo
 from django.db.models import Q
 from utils.response import BaseResponse
 from django.http.request import QueryDict
 from base.service.base import BaseServiceList
+from helpdesk import models
 class Server(BaseServiceList):
     def __init__(self):
         condition_config = [
-            {'name': 'hostname', 'text': '状态', 'condition_type': 'select', 'global_name': 'device_type_list'},
-            {'name': 'ext_ip', 'text': '用户', 'condition_type': 'select', 'global_name': 'device_type_list'},
-            {'name': 'int_ip', 'text': '公司', 'condition_type': 'select', 'global_name': 'device_type_list'},
+            {'name': 'status', 'text': '状态', 'condition_type': 'select', 'global_name': 'device_status_list'},
+            {'name': 'user__username', 'text': '用户', 'condition_type': 'select', 'global_name': 'username_list'},
+            {'name': 'user__computer', 'text': '公司', 'condition_type': 'select', 'global_name': 'computer_list'},
         ]
 
         table_config = [
             {
-                'q': 'id',
+                'q': 'nid',
                 'title': 'id',
                 'display': 0,
                 'text': {},
                 'attr': {}
             },
             {
-                'q': 'hostname',
-                'title': '主机名',
+                'q': 'sn',
+                'title': 'SN序列号',
                 'display': 1,
-                'text': {'content': '{m}', 'kwargs': {'m': '@hostname'}},
-                'attr': {'name':'hostname','id':'@hotname','origin': '@hostname', 'edit-enable': 'true','edit-type': 'input'}
+                'text': {'content': '{m}', 'kwargs': {'m': '@sn'}},
+                'attr': {'name':'sn','id':'@sn','origin': '@sn', 'edit-enable': 'true','edit-type': 'input'}
             },
             # '{n}-{m}'.format({'n': 'hostname','m':'@hostname'}) => hostname-c1.com
             {
-                'q': 'ext_ip',
-                'title': '外部IP',
+                'q': 'type',
+                'title': '种类',
                 'display': 1,
                 #    'text':{},
                 #     'attr':{}
-                'text': {'content': '{m}', 'kwargs': {'m': '@ext_ip'}},
-                'attr': {'name':'ext_ip','id':'@ext_ip','origin': '@ext_ip', 'edit-enable': 'true','edit-type': 'input'}
+                'text': {'content': '{m}', 'kwargs': {'m': '@type'}},
+                'attr': {'name':'type','id':'@type','origin': '@type', 'edit-enable': 'true','edit-type': 'select',
+                         'global-name': 'type_status_list'}
             },
             {
-                'q': 'int_ip',
-                'title': '内部ip',
+                'q': 'asset_model__name',
+                'title': '型号',
                 'display': 1,
-                'text': {'content': '{m}', 'kwargs': {'m': '@int_ip'}},
-                'attr': {'name':'int_ip','id':'@int_ip','origin': '@int_ip', 'edit-enable': 'true','edit-type': 'input'}
+                'text': {'content': '{m}', 'kwargs': {'m': '@@asset_model_list'}},
+                'attr': {'name':'int_ip','id':'@asset_model__name','origin': '@int_ip', 'edit-enable': 'true',
+                         'edit-type': 'select','global-name': 'asset_model_list'}
             },
             {
                 'q': 'status',
@@ -53,16 +55,50 @@ class Server(BaseServiceList):
                 'attr': {'name':'status','id':'@status','orginal': '@status', 'edit-enable': 'true', 'edit-type': 'select',
                          'global-name': 'device_status_list'}
             },
+            {
+                'q': 'user__username',
+                'title': '用户',
+                'display': 1,
+                'text': {'content': '{m}', 'kwargs': {'m': '@@username_list'}},
+                'attr': {'name': 'user__username', 'id': '@user__username', 'orginal': '@user__username', 'edit-enable': 'true',
+                         'edit-type': 'select','global-name': 'username_list'}
+            },
+            {
+                'q': 'ipaddress',
+                'title': '当前IP地址',
+                'display': 1,
+                'text': {'content': '{m}', 'kwargs': {'m': '@ipaddress'}},
+                'attr': {'name': 'ipaddress', 'id': '@ipaddress', 'orginal': '@ipaddress', 'edit-enable': 'false',}
+            },
+            {
+                'q': 'user__computer',
+                'title': '公司',
+                'display': 1,
+                'text': {'content': '{m}', 'kwargs': {'m': '@@computer_list'}},
+                'attr': {'name': 'user__computer', 'id': '@user__computer', 'orginal': '@user__computer', 'edit-enable': 'true',
+                         'edit-type': 'select', 'global-name': 'computer_list'}
+            },
         ]
         extra_select ={}
         super(Server, self).__init__(condition_config, table_config, extra_select)
-
     @property
     def device_status_list(self):
-
-        result = map(lambda x: {'id': x[0], 'name': x[1]}, models.Base.status_choices)
-
+        result = map(lambda x:{'id':x[0],'name':x[1]},models.Asset.status_choices)
         return list(result)
+    @property
+    def computer_list(self):
+        result = map(lambda x:{'id':x[0],'name':x[1]},models.Member.computer_choices)
+        return list(result)
+    @property
+    def username_list(self):
+        values=models.Member.objects.all.values('nid','username')
+        return list(values)
+    @property
+    def asset_model_list(self):
+        values = models.asset_model.objects.all.values('nid','name')
+        return list(values)
+
+
 
     @staticmethod
     def Server_condition(request):
@@ -91,8 +127,8 @@ class Server(BaseServiceList):
 
             conditions = self.Server_condition(request)
 
-            asset_count = models.Base.objects.filter(conditions).count()
-            print(asset_count,'count',request.GET.get('pager')  )
+            asset_count = models.Asset.objects.filter(conditions).count()
+           # print(asset_count,'count',request.GET.get('pager')  )
             page_info = PageInfo(request.GET.get('pager',None),asset_count)
             asset_list = models.Base.objects.filter(conditions).extra(select=self.extra_select).values(\
                 *self.values_list)[page_info.start:page_info.end]
@@ -108,7 +144,10 @@ class Server(BaseServiceList):
             }
 
             ret['global_dict'] = {
-                'device_status_list':self.device_status_list
+                'device_status_list':self.device_status_list,
+                'username_list': self.username_list,
+                'computer_list': self.computer_list,
+                'asset_model_list': self.asset_model_list
             }
             response.data = ret
             response.message = '获取成功'

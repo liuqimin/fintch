@@ -5,15 +5,17 @@ from django.shortcuts import redirect
 from django.db import transaction
 from django.urls import reverse
 from django.views import View
-from background import models
+#from background import models
 from utils.pager import PageInfo
 import json
 import os
 from base.views.base import BaseResponse
-import uuid
+from helpdesk import models
 class DetailsView(View):
     def get(self,request,*args,**kwargs):
-
+        aa=models.Asset.objects.filter(ni=9,sn='JB0BJ400Q00JDG140035').values('asset_model__name')
+        bb=models.Asset.objects.all().select_related('asset_model')
+        print(bb)
         return render(request, 'helpdesk/detail.html')
     def post(self,request,*args,**kwargs):
         pass
