@@ -22,4 +22,5 @@ urlpatterns = [
     url(r'^base/',include('base.urls')),
     url(r'^backend/',include('background.urls')),
     url(r'^net/',include('nettool.urls')),
+    url(r'^asset/',include('helpdesk.urls')),
 ]

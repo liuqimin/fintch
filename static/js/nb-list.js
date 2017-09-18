@@ -882,7 +882,6 @@
                 $content.removeClass('hide').siblings().addClass('hide');
             });
         },
-
         'nbDataList': function (url) {
             requestUrl = url;
             initialize(1);
@@ -897,5 +896,6 @@
             bindMultiSelect();
             bindSearchCondition();
          },
+
     });
 })(jQuery);

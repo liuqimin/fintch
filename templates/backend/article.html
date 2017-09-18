@@ -101,10 +101,15 @@
 <script type="text/javascript" src="/static/js/nb-list.js"></script>
 
     <script>
+
    function ChangePage(arg){
         //    $.pagerchange(arg);
+            var now_url = window.location.href;
+            if(now_url.indexOf('?') != -1){
+                now_url = now_url.split("?")[0];
 
-            console.log(11);
+            }
+            window.location.href=now_url+'?p='+arg;
 
         }
     </script>

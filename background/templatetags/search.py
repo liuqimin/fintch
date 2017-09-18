@@ -75,7 +75,7 @@ def article_type_list(article_type_id,category_id,categroy_list,p=1):
         if obj.nid == int(category_id):
             temp = '<a class ="active" href="{}?p{}">{}</a>'.format(url, p, obj.title)
         else:
-            temp = '<a href="{}?p{}">{}</a>'.format(url, p, obj.title)
+            temp = '<a href="{}?p={}">{}</a>'.format(url, p, obj.title)
         result.append(temp)
     print(result)
     return mark_safe(''.join(result))
