@@ -19,11 +19,11 @@ class Asset(models.Model):
     )
     ni = models.BigAutoField(primary_key=True)
     sn = models.CharField('SN号',max_length=32,unique=True)
-    asset_model = models.ForeignKey(verbose_name='型号',to='asset_model',max_length=32)
+    asset_model = models.ForeignKey(verbose_name='型号',to='asset_model',max_length=32,null=True)
     type = models.IntegerField(verbose_name='类型',choices = type_choices)
     user = models.ForeignKey(verbose_name='使用人',to='Member',to_field='nid',null=True)
     status = models.IntegerField(verbose_name='状态',choices=status_choices)
-    macaddress = models.CharField(verbose_name='MAC地址',max_length=32,unique=True,null=True,blank=True)
+    macaddress = models.CharField(verbose_name='MAC地址',max_length=128,unique=True,null=True,blank=True)
     ipaddress = models.GenericIPAddressField(verbose_name='IP地址',null=True,blank=True)
 
    # status = models.IntegerField(choices = status_choices)
