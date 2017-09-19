@@ -125,6 +125,14 @@
     <script type="text/javascript" src="/static/js/nb-list.js"></script>
 
     <script>
+        $.initMenu('#helpdesk_details');
+        $.nbDataList( '{% url 'helpdesk_details_json' %}');
+
+        function ChangePage(arg){
+            $.pagerchange(arg);
+          //  console.log(11);
+
+        }
 
     </script>
 {% endblock %}

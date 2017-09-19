@@ -5,17 +5,18 @@ from utils.response import BaseResponse
 from django.http.request import QueryDict
 from base.service.base import BaseServiceList
 from helpdesk import models
-class Server(BaseServiceList):
+from django.forms.models import model_to_dict
+class Asset(BaseServiceList):
     def __init__(self):
         condition_config = [
             {'name': 'status', 'text': '状态', 'condition_type': 'select', 'global_name': 'device_status_list'},
-            {'name': 'user__username', 'text': '用户', 'condition_type': 'select', 'global_name': 'username_list'},
+            {'name': 'user', 'text': '用户', 'condition_type': 'select', 'global_name': 'username_list'},
             {'name': 'user__computer', 'text': '公司', 'condition_type': 'select', 'global_name': 'computer_list'},
         ]
 
         table_config = [
             {
-                'q': 'nid',
+                'q': 'ni',
                 'title': 'id',
                 'display': 0,
                 'text': {},
@@ -35,16 +36,16 @@ class Server(BaseServiceList):
                 'display': 1,
                 #    'text':{},
                 #     'attr':{}
-                'text': {'content': '{m}', 'kwargs': {'m': '@type'}},
+                'text': {'content': '{m}', 'kwargs': {'m': '@@type_list'}},
                 'attr': {'name':'type','id':'@type','origin': '@type', 'edit-enable': 'true','edit-type': 'select',
-                         'global-name': 'type_status_list'}
+                         'global-name': 'type_list'}
             },
             {
                 'q': 'asset_model__name',
                 'title': '型号',
                 'display': 1,
-                'text': {'content': '{m}', 'kwargs': {'m': '@@asset_model_list'}},
-                'attr': {'name':'int_ip','id':'@asset_model__name','origin': '@int_ip', 'edit-enable': 'true',
+                'text': {'content': '{m}', 'kwargs': {'m': '@asset_model__name'}},
+                'attr': {'name':'asset_model','id':'@asset_model','origin': '@asset_model', 'edit-enable': 'true',
                          'edit-type': 'select','global-name': 'asset_model_list'}
             },
             {
@@ -59,9 +60,19 @@ class Server(BaseServiceList):
                 'q': 'user__username',
                 'title': '用户',
                 'display': 1,
-                'text': {'content': '{m}', 'kwargs': {'m': '@@username_list'}},
-                'attr': {'name': 'user__username', 'id': '@user__username', 'orginal': '@user__username', 'edit-enable': 'true',
+                'text': {'content': '{m}', 'kwargs': {'m': '@user__username'}},
+                'attr': {'name': 'user', 'id': '@user', 'orginal': '@user', 'edit-enable': 'true',
                          'edit-type': 'select','global-name': 'username_list'}
+            },
+            {
+                'q': 'user',
+                'title': '用户',
+                'display': 0,
+            },
+            {
+                'q': 'asset_model',
+                'title': '型号',
+                'display': 0,
             },
             {
                 'q': 'ipaddress',
@@ -80,7 +91,12 @@ class Server(BaseServiceList):
             },
         ]
         extra_select ={}
-        super(Server, self).__init__(condition_config, table_config, extra_select)
+        super(Asset, self).__init__(condition_config, table_config, extra_select)
+    @property
+    def type_list(self):
+        result = map(lambda x: {'id': x[0], 'name': x[1]}, models.Asset.type_choices)
+        return list(result)
+
     @property
     def device_status_list(self):
         result = map(lambda x:{'id':x[0],'name':x[1]},models.Asset.status_choices)
@@ -89,14 +105,20 @@ class Server(BaseServiceList):
     def computer_list(self):
         result = map(lambda x:{'id':x[0],'name':x[1]},models.Member.computer_choices)
         return list(result)
+
     @property
     def username_list(self):
-        values=models.Member.objects.all.values('nid','username')
-        return list(values)
+        values=models.Member.objects.all().values('nid','username')
+        result = map(lambda x:{'id':x[0],'name':x[1]},values)
+        values = models.Member.objects.only('nid', 'username')
+        result = map(lambda x: {'id': x.nid, 'name': x.username}, values)
+        return list(result)
+
     @property
     def asset_model_list(self):
-        values = models.asset_model.objects.all.values('nid','name')
-        return list(values)
+        values = models.asset_model.objects.all().values('nid','name').values_list()
+        result = map(lambda x: {'id': x[0], 'name': x[1]}, values)
+        return list(result)
 
 
 
@@ -120,18 +142,19 @@ class Server(BaseServiceList):
 
             return con_q
 
-    def fetch_services(self,request):
+    def fetch_asset(self,request):
         response = BaseResponse()
+
         try:
             ret = {}
-
+            print(request)
             conditions = self.Server_condition(request)
 
             asset_count = models.Asset.objects.filter(conditions).count()
-           # print(asset_count,'count',request.GET.get('pager')  )
             page_info = PageInfo(request.GET.get('pager',None),asset_count)
-            asset_list = models.Base.objects.filter(conditions).extra(select=self.extra_select).values(\
-                *self.values_list)[page_info.start:page_info.end]
+            asset_list = models.Asset.objects.filter(conditions).extra(select=self.extra_select)\
+                             .values(*self.values_list)[page_info.start:page_info.end]
+            print(asset_list)
             ret['table_config'] = self.table_config
 
             ret['condition_config'] = self.condition_config
@@ -142,12 +165,12 @@ class Server(BaseServiceList):
                 "page_str": page_info.pager(),
                 "page_start": page_info.start,
             }
-
             ret['global_dict'] = {
                 'device_status_list':self.device_status_list,
                 'username_list': self.username_list,
                 'computer_list': self.computer_list,
-                'asset_model_list': self.asset_model_list
+                'asset_model_list': self.asset_model_list,
+                'type_list':self.type_list,
             }
             response.data = ret
             response.message = '获取成功'
