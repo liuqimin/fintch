@@ -276,11 +276,11 @@
     function initTableBody(startNum, list, tbConfig) {
         var $body = $('#table_body');
         $body.empty();
-
+        console.log(list);
         $.each(list, function (k1, row) {
             // row 表示从数据库获取的每行资产字典信息 {'id':'1','name': 'root' ...}
             // tbConfig 包含了所有表格的配置
-
+            console.log(row);
             var tr = document.createElement('tr');
             tr.setAttribute('nid', row['id']);
             tr.setAttribute('num', startNum + k1 + 1);
@@ -404,7 +404,8 @@
             tag = $.CreateSelect({
                 'is-condition': 'true',
                 'class': 'form-control select-icon no-radius',
-                'name': item.name
+                'name': item.name,
+
             }, {}, NB_GLOBAL_DICT[item.global_name], null, 'id', 'name');
         }
         var $current = $('#search_condition');

@@ -1,11 +1,10 @@
-{% extends 'layout/helpdesk_layout.html' %}
+{% extends 'layout/base.html' %}
 
-{% block css %}
-
-
+{% block self_head_css_js %}
+    <script src="/static/plugins/layer/layer.js"></script>
 {% endblock %}
 
-{% block conent %}
+{% block content %}
     <ol class="breadcrumb" style="margin-bottom: 0;">
         <li><a href="/cmdb.html">首页</a></li>
         <li class="active">办公设备管理</li>
@@ -53,7 +52,7 @@
                     <a id="check_cancel" class="btn btn-default no-radius"><i class="fa fa-minus-square-o"></i> 取消</a>
                     <a id="check_reverse" class="btn btn-default no-radius"><i
                             class="fa fa-check-square-o"></i> 反选</a>
-                    <a class="btn btn-default no-radius" href="/base/add-server.html"><i class="fa fa-plus-circle"></i>添加</a>
+                    <a class="btn btn-default no-radius" href="{% url 'helpdesk_add_asset' %}"><i class="fa fa-plus-circle"></i>添加</a>
                     <a id="do_delete" class="btn btn-default no-radius"><i class="fa fa-trash"></i> 删除</a>
                     <a id="edit_mode_target" class="btn btn-default no-radius"><i class="fa fa-pencil-square-o"></i>
                         <span>进入编辑模式</span></a>
@@ -68,6 +67,7 @@
             <div class="table-responsive table-area">
                 <table class="table table-striped table-bordered">
                     <!-- 表格标题开始 -->
+
                     <thead id="table_head">
                     <tr>
 
@@ -98,7 +98,7 @@
     <div id="modal_delete" class="alert alert-danger alert-dismissible fade in modal-delete hide" role="alert">
         <button type="button" class="close" aria-label="Close" onclick="$.Hide('#shade,#modal_delete');"><span>×</span>
         </button>
-        <h4>确定删除主机？</h4>
+        <h4>确定删除资产？</h4>
 
         <p>与该资产相关联的信息等将全部被删除！<br/> &nbsp;</p>
 
@@ -120,9 +120,8 @@
 {% endblock %}
 
 {% block js %}
-    <script type="text/javascript" src="/static/js/jquery.cookie.js"></script>
-    <script type="text/javascript" src="/static/plugins/bootstrap/js/bootstrap.js"></script>
-    <script type="text/javascript" src="/static/js/nb-list.js"></script>
+
+    <script src="/static/js/nb-list.js"></script>
 
     <script>
         $.initMenu('#helpdesk_details');

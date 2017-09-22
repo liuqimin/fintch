@@ -13,8 +13,6 @@ from base.views.base import BaseResponse
 from helpdesk import models
 class DetailsView(View):
     def get(self,request,*args,**kwargs):
-      #  aa=models.Asset.objects.filter(ni=9,sn='JB0BJ400Q00JDG140035').values('asset_model__name')
-     #   bb=models.Asset.objects.all().select_related('asset_model')
 
         return render(request, 'helpdesk/detail.html')
 
@@ -29,8 +27,21 @@ class DetailsJsonView(View):
         return JsonResponse(response.__dict__)
     def post(self,request,*args,**kwargs):
         pass
+    def delete(self, request):
+        print('111')
+        obj = details.Asset()
+        response = obj.delete_assets(request)
+        return JsonResponse(response.__dict__)
 
-
+    def put(self, request):
+        obj = details.Asset()
+        response = obj.put_assets(request)
+        return JsonResponse(response.__dict__)
+class AddAssetView(View):
+    def get(self,request,*args,**kwargs):
+        return render(request, 'helpdesk/add_detail.html')
+    def post(self,request,*args,**kwargs):
+        pass
 
 '''
     class ServerJsonView(View):

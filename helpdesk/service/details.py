@@ -9,8 +9,9 @@ from django.forms.models import model_to_dict
 class Asset(BaseServiceList):
     def __init__(self):
         condition_config = [
+            { 'text': '条件筛选', 'condition_type': 'input'},
             {'name': 'status', 'text': '状态', 'condition_type': 'select', 'global_name': 'device_status_list'},
-            {'name': 'user', 'text': '用户', 'condition_type': 'select', 'global_name': 'username_list'},
+            {'name': 'user_id', 'text': '用户', 'condition_type': 'select', 'global_name': 'username_list'},
             {'name': 'user__computer', 'text': '公司', 'condition_type': 'select', 'global_name': 'computer_list'},
         ]
 
@@ -18,16 +19,16 @@ class Asset(BaseServiceList):
             {
                 'q': 'ni',
                 'title': 'id',
-                'display': 0,
-                'text': {},
-                'attr': {}
+                'display': 1,
+                'text': {'content': '{m}', 'kwargs': {'m': '@ni'}},
+                'attr': {'name':'sn'}
             },
             {
                 'q': 'sn',
                 'title': 'SN序列号',
                 'display': 1,
                 'text': {'content': '{m}', 'kwargs': {'m': '@sn'}},
-                'attr': {'name':'sn','id':'@sn','origin': '@sn', 'edit-enable': 'true','edit-type': 'input'}
+                'attr': {'name':'sn','id':'@sn','origin': '@sn', 'edit-enable': 'false'}
             },
             # '{n}-{m}'.format({'n': 'hostname','m':'@hostname'}) => hostname-c1.com
             {
@@ -149,7 +150,7 @@ class Asset(BaseServiceList):
             ret = {}
             print(request)
             conditions = self.Server_condition(request)
-
+            print(conditions)
             asset_count = models.Asset.objects.filter(conditions).count()
             page_info = PageInfo(request.GET.get('pager',None),asset_count)
             asset_list = models.Asset.objects.filter(conditions).extra(select=self.extra_select)\
@@ -186,8 +187,11 @@ class Asset(BaseServiceList):
         print('delete')
         try:
             delete_dict = QueryDict(request.body,encoding='utf-8')  ##get id_list
+
             id_list = delete_dict.getlist('id_list')
-            models.Base.objects.filter(id__in=id_list).delete()
+            print(delete_dict)
+            print(id_list)
+            models.Asset.objects.filter(id__in=id_list).delete()
             response.message = '删除成功'
         except Exception as e:
             response.status = False
@@ -202,6 +206,7 @@ class Asset(BaseServiceList):
             put_dict = QueryDict(request.body,encoding='utf-8')
             update_list = json.loads(put_dict.get('update_list'))
             error_count = 0
+            print(put_dict)
             for row_dict in update_list:
 
                 nid = row_dict.pop('nid')
