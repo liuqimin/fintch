@@ -1,6 +1,20 @@
-from django import forms as django_forms
-from django.core.exceptions import ValidationError
-from django.forms import widgets
-from django.forms import fields as django_fields
-from django.contrib.auth.models import User
-from base import models
+from django import forms
+from .models import Asset
+
+
+
+class Asset_form(forms.ModelForm):
+
+    def clean(self):
+        cleaned_data = super(Asset_form, self).clean()
+        value = cleaned_data.get('name')
+        try:
+            Asset.objects.get(name=value)
+            self._errors['sn']=self.error_class(["%s的信息已经存在" % value])
+        except Asset.DoesNotExist:
+            pass
+        return cleaned_data
+
+    class Meta:
+        model = Asset
+        exclude = ("ni",)

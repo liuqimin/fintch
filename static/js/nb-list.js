@@ -62,6 +62,8 @@
                 }
                 if (newer != undefined && original != newer) {
                     rows[name] = newer;
+                    console.log(newer,original,'111');
+                    console.log(newer,original,'111');
                     flag = true;
                 }
             });
@@ -69,13 +71,14 @@
                 rows["nid"] = nid;
                 rows["num"] = num;
                 updateData.push(rows);
+
             }
         });
         if (updateData.length < 1) {
             return;
         }
         updateData = JSON.stringify(updateData);
-
+        console.log('updateData',updateData);
         $.ajax({
             url: requestUrl,
             type: 'PUT',
@@ -276,11 +279,11 @@
     function initTableBody(startNum, list, tbConfig) {
         var $body = $('#table_body');
         $body.empty();
-        console.log(list);
+
         $.each(list, function (k1, row) {
             // row 表示从数据库获取的每行资产字典信息 {'id':'1','name': 'root' ...}
             // tbConfig 包含了所有表格的配置
-            console.log(row);
+
             var tr = document.createElement('tr');
             tr.setAttribute('nid', row['id']);
             tr.setAttribute('num', startNum + k1 + 1);
@@ -524,9 +527,9 @@
     /* ================= */
 
     function DoTrIntoEdit($tr, specialInEditFunc) {
-        console.log(111);
+
         $tr.find('td[edit-enable="true"]').each(function () {
-            console.log($(this));
+
             ExecuteTdIntoEdit($(this), specialInEditFunc);
         });
     }
@@ -865,8 +868,7 @@
 
                     if (check) {
                         $tr.addClass('success');
-                        console.log($tr);
-                        console.log(specialInEditFunc);
+
                         DoTrIntoEdit($tr, specialInEditFunc);
                     }
                 });

@@ -26,7 +26,7 @@ class Server(BaseServiceList):
                 'title': '主机名',
                 'display': 1,
                 'text': {'content': '{m}', 'kwargs': {'m': '@hostname'}},
-                'attr': {'name':'hostname','id':'@hotname','origin': '@hostname', 'edit-enable': 'true','edit-type': 'input'}
+                'attr': {'name':'hostname','id':'@hotname','original': '@hostname', 'edit-enable': 'true','edit-type': 'input'}
             },
             # '{n}-{m}'.format({'n': 'hostname','m':'@hostname'}) => hostname-c1.com
             {
@@ -36,21 +36,21 @@ class Server(BaseServiceList):
                 #    'text':{},
                 #     'attr':{}
                 'text': {'content': '{m}', 'kwargs': {'m': '@ext_ip'}},
-                'attr': {'name':'ext_ip','id':'@ext_ip','origin': '@ext_ip', 'edit-enable': 'true','edit-type': 'input'}
+                'attr': {'name':'ext_ip','id':'@ext_ip','original': '@ext_ip', 'edit-enable': 'true','edit-type': 'input'}
             },
             {
                 'q': 'int_ip',
                 'title': '内部ip',
                 'display': 1,
                 'text': {'content': '{m}', 'kwargs': {'m': '@int_ip'}},
-                'attr': {'name':'int_ip','id':'@int_ip','origin': '@int_ip', 'edit-enable': 'true','edit-type': 'input'}
+                'attr': {'name':'int_ip','id':'@int_ip','original': '@int_ip', 'edit-enable': 'true','edit-type': 'input'}
             },
             {
                 'q': 'status',
                 'title': '状态',
                 'display': 1,
                 'text': {'content': '{m}', 'kwargs': {'m': '@@device_status_list'}},
-                'attr': {'name':'status','id':'@status','orginal': '@status', 'edit-enable': 'true', 'edit-type': 'select',
+                'attr': {'name':'status','id':'@status','original': '@status', 'edit-enable': 'true', 'edit-type': 'select',
                          'global-name': 'device_status_list'}
             },
         ]

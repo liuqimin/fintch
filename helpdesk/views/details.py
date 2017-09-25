@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.db import transaction
 from django.urls import reverse
+from helpdesk.form import Asset_form
 from django.views import View
 from utils.pager import PageInfo
 import json
@@ -37,9 +38,14 @@ class DetailsJsonView(View):
         obj = details.Asset()
         response = obj.put_assets(request)
         return JsonResponse(response.__dict__)
+
 class AddAssetView(View):
     def get(self,request,*args,**kwargs):
-        return render(request, 'helpdesk/add_detail.html')
+       # bb=Asset_form()
+        kwargs = {
+            'form': Asset_form(),
+        }
+        return render(request, 'helpdesk/add_detail.html',kwargs)
     def post(self,request,*args,**kwargs):
         pass
 

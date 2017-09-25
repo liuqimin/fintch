@@ -28,7 +28,7 @@ class Asset(BaseServiceList):
                 'title': 'SN序列号',
                 'display': 1,
                 'text': {'content': '{m}', 'kwargs': {'m': '@sn'}},
-                'attr': {'name':'sn','id':'@sn','origin': '@sn', 'edit-enable': 'false'}
+                'attr': {'name':'sn','id':'@sn','original': '@sn', 'edit-enable': 'false'}
             },
             # '{n}-{m}'.format({'n': 'hostname','m':'@hostname'}) => hostname-c1.com
             {
@@ -38,7 +38,7 @@ class Asset(BaseServiceList):
                 #    'text':{},
                 #     'attr':{}
                 'text': {'content': '{m}', 'kwargs': {'m': '@@type_list'}},
-                'attr': {'name':'type','id':'@type','origin': '@type', 'edit-enable': 'true','edit-type': 'select',
+                'attr': {'name':'type','id':'@type','original': '@type', 'edit-enable': 'true','edit-type': 'select',
                          'global-name': 'type_list'}
             },
             {
@@ -46,7 +46,7 @@ class Asset(BaseServiceList):
                 'title': '型号',
                 'display': 1,
                 'text': {'content': '{m}', 'kwargs': {'m': '@asset_model__name'}},
-                'attr': {'name':'asset_model','id':'@asset_model','origin': '@asset_model', 'edit-enable': 'true',
+                'attr': {'name':'asset_model','id':'@asset_model','original': '@asset_model', 'edit-enable': 'true',
                          'edit-type': 'select','global-name': 'asset_model_list'}
             },
             {
@@ -54,7 +54,7 @@ class Asset(BaseServiceList):
                 'title': '状态',
                 'display': 1,
                 'text': {'content': '{m}', 'kwargs': {'m': '@@device_status_list'}},
-                'attr': {'name':'status','id':'@status','orginal': '@status', 'edit-enable': 'true', 'edit-type': 'select',
+                'attr': {'name':'status','id':'@status','original': '@status', 'edit-enable': 'true', 'edit-type': 'select',
                          'global-name': 'device_status_list'}
             },
             {
@@ -62,7 +62,7 @@ class Asset(BaseServiceList):
                 'title': '用户',
                 'display': 1,
                 'text': {'content': '{m}', 'kwargs': {'m': '@user__username'}},
-                'attr': {'name': 'user', 'id': '@user', 'orginal': '@user', 'edit-enable': 'true',
+                'attr': {'name': 'user', 'id': '@user', 'original': '@user', 'edit-enable': 'true',
                          'edit-type': 'select','global-name': 'username_list'}
             },
             {
@@ -80,15 +80,15 @@ class Asset(BaseServiceList):
                 'title': '当前IP地址',
                 'display': 1,
                 'text': {'content': '{m}', 'kwargs': {'m': '@ipaddress'}},
-                'attr': {'name': 'ipaddress', 'id': '@ipaddress', 'orginal': '@ipaddress', 'edit-enable': 'false',}
+                'attr': {'name': 'ipaddress', 'id': '@ipaddress', 'original': '@ipaddress', 'edit-enable': 'false',}
             },
             {
                 'q': 'user__computer',
                 'title': '公司',
                 'display': 1,
                 'text': {'content': '{m}', 'kwargs': {'m': '@@computer_list'}},
-                'attr': {'name': 'user__computer', 'id': '@user__computer', 'orginal': '@user__computer', 'edit-enable': 'true',
-                         'edit-type': 'select', 'global-name': 'computer_list'}
+                'attr': {'name': 'user__computer', 'id': '@user__computer', 'original': '@user__computer', 'edit-enable': 'false',
+                         }
             },
         ]
         extra_select ={}
@@ -148,19 +148,23 @@ class Asset(BaseServiceList):
 
         try:
             ret = {}
-            print(request)
+          #  print(request)
             conditions = self.Server_condition(request)
             print(conditions)
             asset_count = models.Asset.objects.filter(conditions).count()
             page_info = PageInfo(request.GET.get('pager',None),asset_count)
             asset_list = models.Asset.objects.filter(conditions).extra(select=self.extra_select)\
                              .values(*self.values_list)[page_info.start:page_info.end]
-            print(asset_list)
+        #    print(list(asset_list))
             ret['table_config'] = self.table_config
 
             ret['condition_config'] = self.condition_config
 
             ret['data_list'] = list(asset_list)
+            ##对前端适应，提供id字段
+            for i in list(asset_list):
+                i['id'] = i['ni']
+
 
             ret['page_info'] = {
                 "page_str": page_info.pager(),
@@ -189,12 +193,13 @@ class Asset(BaseServiceList):
             delete_dict = QueryDict(request.body,encoding='utf-8')  ##get id_list
 
             id_list = delete_dict.getlist('id_list')
-            print(delete_dict)
+
             print(id_list)
-            models.Asset.objects.filter(id__in=id_list).delete()
+            models.Asset.objects.filter(ni__in=id_list).delete()
             response.message = '删除成功'
         except Exception as e:
             response.status = False
+            print(e)
             response.message = str(e)
         return response
 
@@ -204,15 +209,18 @@ class Asset(BaseServiceList):
         print('save')
         try:
             put_dict = QueryDict(request.body,encoding='utf-8')
+            print(put_dict)
             update_list = json.loads(put_dict.get('update_list'))
             error_count = 0
-            print(put_dict)
+            print(update_list)
             for row_dict in update_list:
 
                 nid = row_dict.pop('nid')
                 num = row_dict.pop('num')
+                print(row_dict)
                 try:
-                    models.Base.objects.filter(id=nid).update(**row_dict)
+                    print(models.Asset.objects.filter(ni=nid).values())
+                    models.Asset.objects.filter(ni=nid).update(**row_dict)
                 except Exception as e:
                     response.error.append({'num':num,'message':str(e)})
                     response.status = False
@@ -225,5 +233,6 @@ class Asset(BaseServiceList):
         except Exception as e:
             response.status =False
             response.message = str(e)
+
         return response
 
