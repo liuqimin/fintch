@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url,include
 from django.contrib import admin
+from base.views import logininfo
 from django.contrib.auth import views as auth_views
 from base import views
 urlpatterns = [
@@ -23,4 +24,5 @@ urlpatterns = [
     url(r'^backend/',include('background.urls')),
     url(r'^net/',include('nettool.urls')),
     url(r'^asset/',include('helpdesk.urls')),
+    url(r'^logout', logininfo.logout,name='logout'),
 ]

@@ -28,7 +28,7 @@ class ac_login(View):
         passwd = request.POST.get('password')
         check_code = request.POST.get("check_code")
         if request.session.has_key('CheckCode') and request.session.get('CheckCode') ==check_code:
-            print('哈哈')
+
             #
             result = authenticate(username=user, password=passwd)
             if result is not None:
@@ -45,7 +45,7 @@ class ac_login(View):
             else:
                 data.status = False
                 data.message = "用户密码错误"
-                print(data.__dict__)
+
                 return HttpResponse(json.dumps(data.__dict__))
 
         else:

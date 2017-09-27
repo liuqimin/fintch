@@ -1,18 +1,21 @@
 from django.shortcuts import render
 from django.shortcuts import HttpResponse
 from django.http import JsonResponse
-from django.shortcuts import redirect
-from django.db import transaction
-from django.urls import reverse
+from base.views import base
 from helpdesk.form import Asset_form
 from django.views import View
-from utils.pager import PageInfo
-import json
-import os
+from helpdesk import form
 from helpdesk.service import details
-from base.views.base import BaseResponse
+from base.auth.auth import check_login
 from helpdesk import models
+from django.utils.decorators import method_decorator
+
 class DetailsView(View):
+
+    def dispatch(self, request, *args, **kwargs):
+        return super(DetailsView, self).dispatch(request, *args, **kwargs)
+
+    @method_decorator(check_login)
     def get(self,request,*args,**kwargs):
 
         return render(request, 'helpdesk/detail.html')
@@ -20,7 +23,13 @@ class DetailsView(View):
     def post(self,request,*args,**kwargs):
         pass
 
+
 class DetailsJsonView(View):
+    @method_decorator(check_login)
+    def dispatch(self, request, *args, **kwargs):
+        return super(DetailsJsonView, self).dispatch(request, *args, **kwargs)
+
+
     def get(self,request,*args,**kwargs):
         obj = details.Asset()
         response = obj.fetch_asset(request)
@@ -39,15 +48,33 @@ class DetailsJsonView(View):
         response = obj.put_assets(request)
         return JsonResponse(response.__dict__)
 
+
 class AddAssetView(View):
+    @method_decorator(check_login)
+    def dispatch(self, request, *args, **kwargs):
+        return super(AddAssetView, self).dispatch(request, *args, **kwargs)
+
     def get(self,request,*args,**kwargs):
        # bb=Asset_form()
         kwargs = {
             'form': Asset_form(),
         }
+
+       # return render(request, 'helpdesk/add_detail.html',locals())
         return render(request, 'helpdesk/add_detail.html',kwargs)
     def post(self,request,*args,**kwargs):
-        pass
+        asset_form = form.Asset_form(request.POST)
+        print(request.POST)
+        result = base.BaseResponse()
+        if asset_form.is_valid():
+          #  print(**asset_form.changed_data)
+            asset_form.save()
+            result.status = True
+            result.message = "增加成功"
+        else:
+            result.status = False
+            result.message = str(asset_form.jsonlist)
+        return JsonResponse(result.__dict__)
 
 '''
     class ServerJsonView(View):

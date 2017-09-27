@@ -84,7 +84,7 @@
                     success: function (arg) {
                         if(arg.status){
                            // console.log('status');
-                            location.href = '/base/server.html';
+                            location.href = '{% url 'helpdesk_details' %}';
                         }else{
                             //console.log(arg.message);
                             $msg.parent().removeClass('hide');

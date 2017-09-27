@@ -1,7 +1,76 @@
 {% extends 'layout/base.html' %}
-{% block self_head_css_js %}
-    <script src="/static/plugins/layer/layer.js"></script>
-    <script type="text/javascript" src="/static/js/jquery.cookie.js"></script>
-    <script type="text/javascript" src="/static/plugins/bootstrap/js/bootstrap.js"></script>
-    <script type="text/javascript" src="/static/js/nb-list.js"></script>
+{% block content %}
+    <ol class="breadcrumb" style="margin-bottom: 0;">
+        <li><a href="/cmdb.html">首页</a></li>
+        <li class="active">办公设备新增</li>
+    </ol>
+    <div style="padding: 5px 8px;" id="add-server-div" >
+        <form id="userlistform"  >
+            <p>{{ form.as_p }}</p>
+
+        </form>
+         <div class="box-footer">
+             <button type="submit" class="btn btn-primary" onclick="bindcreatasset()">Submit</button>
+         </div>
+    </div>
+    {{ result }}
+
+{% endblock %}
+
+
+{% block js %}
+    <script>
+        function bindcreatasset(){
+
+                console.log($('#userlistform').serialize());
+                $.ajax({
+                        url: '{% url 'helpdesk_add_asset' %}',
+                        type: 'POST',
+                        dataType: 'JSON', // 内部
+                        traditional: true,
+                        data: $('#userlistform').serialize(),
+                        success: function(obj){
+                             if (obj.status){
+                                 console.log('11');
+
+                                 layerasset('asset',obj.message);
+
+                             }else{
+                                 console.log('22');
+
+                                 layerassetnocallback('asset',obj.message);
+                             }
+
+                         },
+                        error: function (obj) {
+                            console.log('32');
+                            layerasset('asset','over',0);
+                    }
+                })
+        };
+
+        // 刷新页面,弹窗
+        function layerasset(app,content){
+            layer.open({
+               title: app,
+                anim: 3,
+                content: content,
+                yes:function(){
+                   location.reload();
+                }
+            });
+        }
+        // 不刷新页面,弹窗
+        function layerassetnocallback(app,content){
+            layer.open({
+               title: app,
+                anim: 3,
+                content: content,
+                yes:function(){
+                   location.reload();
+                }
+            });
+        }
+    </script>
+
 {% endblock %}

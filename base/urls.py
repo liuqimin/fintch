@@ -21,7 +21,6 @@ urlpatterns = [
 
      url(r'^login', logininfo.ac_login.as_view()),
      url(r'^registeruser', logininfo.registerview.as_view()),
-
    # url('^', include('django.contrib.auth.urls')),
     url(r'^password_change/$', auth_views.PasswordChangeView.as_view(), name='password_change'),
     url(r'^password_change/done/$', auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),
