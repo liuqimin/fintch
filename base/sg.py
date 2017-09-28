@@ -15,6 +15,7 @@ from django.dispatch import receiver
 from django.contrib.auth.models import User
 from django.db.backends.signals import connection_created
 from base.models import UserProfile
+from django.dispatch import Signal
 
 @receiver(post_save, sender=User)
 def create_favorites(sender, instance, created, **kwargs):
@@ -29,3 +30,4 @@ def f1(sender, **kwargs):
 
 
 pre_save.connect(f1)
+state_audit_signal = Signal(providing_args=["user", "old_state", "new_state"])
