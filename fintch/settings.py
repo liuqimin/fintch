@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'base',
     'background',
     'helpdesk',
+
 ]
 
 MIDDLEWARE = [
@@ -50,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'Middle.LoggerRequestMiddleware.UserAction'
 ]
 
 ROOT_URLCONF = 'fintch.urls'
@@ -126,3 +128,37 @@ TEMPLATE_DIRS = (os.path.join(BASE_DIR,'templates'),)
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
+#INFO 2017-10-06 10:22:40,360 LoggerRequestMiddleware 55588 123145496473600 access
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s  %(module)s   %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(asctime)s %(message)s'
+        },
+    },
+    'handlers': {
+        'AccessLog': {
+            'level': 'INFO',
+            'class':'logging.handlers.TimedRotatingFileHandler',
+            'filename':'./logs/accesslog.log',
+            'formatter':'simple',
+            'when':'midnight',
+            'interval':1,
+            'backupCount':7,
+        },
+    },
+    'loggers': {
+        'AccessLog': {
+            'handlers': ['AccessLog',],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+
+    }
+}

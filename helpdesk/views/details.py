@@ -9,7 +9,6 @@ from helpdesk.service import details
 from base.auth.auth import check_login
 from helpdesk import models
 from django.utils.decorators import method_decorator
-from crequest.middleware import CrequestMiddleware
 class DetailsView(View):
 
     def dispatch(self, request, *args, **kwargs):
@@ -17,9 +16,6 @@ class DetailsView(View):
 
     @method_decorator(check_login)
     def get(self,request,*args,**kwargs):
-        current_request = CrequestMiddleware.get_request()
-        bb= CrequestMiddleware.set_request(request)
-        print(current_request,333,bb)
         return render(request, 'helpdesk/detail.html')
 
     def post(self,request,*args,**kwargs):
